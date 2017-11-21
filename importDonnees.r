@@ -1,6 +1,7 @@
 library(ggplot2)
 install.packages("httr")
-install.packages("magrittr")
+#install.packages("magrittr")
+library(magrittr)
 #install.packages("ggplot2")
 library(plyr)
 library(purrr)
@@ -50,22 +51,27 @@ temp <- list.files(directory,
                    pattern="ID-centai-tablette-*", full.names=TRUE)
 if(i==1)
 {
-myJSON <-jsonlite::fromJ
+  essai <- purrr::map_df(temp, function(x) { 
+    purrr::map(jsonlite::fromJSON(x), function(y) ifelse(is.null(y), NA, y)) 
+  })
 }
 else
 {
-    temporaryList <- lapply(temp, function(x) 
-    {
-      is.na(x) = is.null(x)
-      jsonlite::fromJSON(x)
-    }) 
-  myJSON=c(myJSON,temporaryList)
+  essai=rbind(essai,purrr::map_df(temp, function(x) { 
+    purrr::map(jsonlite::fromJSON(x), function(y) ifelse(is.null(y), NA, y)) 
+  }))
 }
 }
+names
+essai$entities[[2]]
 head(myJSON)
+deuxiemeEssai=do.call(c, unlist(myJSON, recursive=FALSE))
+deuxiemeEssai$user.name
+essai$text
+myJSON[[1]]$in_reply_to_status_id_str
 library(dplyr)
 library(tidyr)
-
+myJSON[[1]]$user
 library(magrittr)
 df <- data.frame(a=colonnesUtiles, b=names(colonnesUtiles)) %>% mutate(key=cumsum(b=="experience.duration")) %>% 
   split(.$key) %>% lapply(function(x) x %>% select(-key) %>% spread(b, a)) %>% 
@@ -74,6 +80,10 @@ df <- data.frame(a=colonnesUtiles, b=names(colonnesUtiles)) %>% mutate(key=cumsu
 df$key <- rownames(df)
 unlistedData=unlist(sapply(myJSON,simplify = TRUE,USE.NAMES = TRUE, function(x) unlist(use.names = T,lapply(x, function(x) ifelse(is.null(x),NA,x)))))
 unlistedData=unlist(myJSON)
+
+lol=sapply(myJSON,simplify = TRUE,USE.NAMES = TRUE, function(x) x)
+lol[[1]]
+texte=myJSON[[1]]$text
 colonnesUtiles=unlistedData[names(unlistedData)==
                c("text",
                  "user.time_zone",
@@ -88,18 +98,30 @@ colonnesUtiles=unlistedData[names(unlistedData)==
                  "user.friends_count",
                  "user.statuses_count",
                  "user.followers_count")]
-do.call(rbind, lapply(myJSON, function(x)as.data.frame(x)))
+lapply(myJSON, `[[`, 6)
+names(myJSON[[2]])
 
-dfessai=data.frame
+colonnesUtiles
+packages <- c("jsonlite", "dplyr", "purrr")
+purrr::walk(packages, library, character.only = TRUE, warn.conflicts = FALSE)
+class(data)
+data <- map_at(data, vars, unlist) %>% tibble::as_tibble(.)
+do.call(rbind, lapply(myJSON, function(x)as.data.frame(x)))
+names(myJSON[[1]])
 colonnesUtilesF=jsonlite::flatten(colonnesUtiles)
 lapply(myJSON,function(x)
   {
   dfessai=cbind(dfessai,x)
   })
+install.packages("devtools")
+devtools::install_github("gluc/data.tree")
 dfessai
-myJSON
-install.packages("gtools")
+essai$user
 library(gtools)
+install.packages("devtools")
+require(devtools)
+data.table::rbindlist(myJSON,fill=T)
+source_gist(4205477)
 do.call("smartbind",myJSON)
 listColonnesUtiles=as.list(colonnesUtiles)
 listColonnesUtiles$possibly_sensitive
@@ -119,9 +141,6 @@ place
 dfTweets=data.frame(unlistedData[names(unlistedData)=="text"],check.names = T)
 dfTweets=cbind(dfTweets,unlistedData,unlistedData[names(unlistedData)=="place.country"])
 names(dfTweets)
-dfTweets
-
-unlis
 tweets[,"user"]
 head(dfTweets)
 names(dfTweets)
@@ -142,3 +161,19 @@ hashtags <- str_extract_all(tweets$text, hashtag.regex)
 tweets_tags=cbind(texts$text,hashtags)
 tweets_tags
 summary(fusion)
+lapply(myJSON,function(x) x$user$name)
+length(lapply(myJSON,function(x) x$user$name))
+dfTweets=as.data.frame(lapply(myJSON,function(x) x$user$name))
+dfTweets
+dfTweets = as.data.frame(do.call(rbind,plyr::ldply(myJSON, function(x) x)))
+myJSON[[3]]$place
+dfEssai=as.data.frame()
+plyr::ldply(myJSON, x)
+install.packages("reshape2")
+library("reshape2")
+dcast(cbind(
+  coln = sequence(rapply(myJSON, length)), 
+  melt(myJSON)), L1 + L2 ~ coln, 
+  value.var = "value")
+tibTweets=tibble::tibble()
+tibTweets
