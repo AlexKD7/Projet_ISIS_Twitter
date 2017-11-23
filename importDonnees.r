@@ -51,15 +51,11 @@ temp <- list.files(directory,
                    pattern="ID-centai-tablette-*", full.names=TRUE)
 if(i==1)
 {
-  essai <- purrr::map_df(temp, function(x) { 
-    purrr::map(jsonlite::fromJSON(x), function(y) ifelse(is.null(y), NA, y)) 
-  })
+  myJSON <- lapply(temp, function(x) fromJSON(file=x))
 }
 else
 {
-  essai=rbind(essai,purrr::map_df(temp, function(x) { 
-    purrr::map(jsonlite::fromJSON(x), function(y) ifelse(is.null(y), NA, y)) 
-  }))
+  myJSON=myJSON+lapply(temp, function(x) fromJSON(file=x))
 }
 }
 names
@@ -98,9 +94,54 @@ colonnesUtiles=unlistedData[names(unlistedData)==
                  "user.friends_count",
                  "user.statuses_count",
                  "user.followers_count")]
-lapply(myJSON, `[[`, 6)
-names(myJSON[[2]])
+user.name=lapply(myJSON,function(x) x$user$name)
+text=lapply(myJSON,function(x) x$text)
+possiblySensitive=lapply(myJSON,function(x) x$possibly_sensitive)
+user.time_zone=lapply(myJSON,function(x) x$user$time_zone)
+user.location=lapply(myJSON,function(x) x$user$location)
+user.description=lapply(myJSON,function(x) x$user$description)
+user.created_at=lapply(myJSON,function(x) x$user$created_at)
+user.lang=lapply(myJSON,function(x) x$user$lang)
+user.listed_count=lapply(myJSON,function(x) x$user$listed_count)
+user.friends_count=lapply(myJSON,function(x) x$user$friends_count)
+user.statuses_count=lapply(myJSON,function(x) x$user$statuses_count)
+user.followers_count=lapply(myJSON,function(x) x$user$followers_count)
+length(unlist(user.followers_count))
 
+dfTweets=do.call(rbind,
+        lapply(1:length(text),
+               function(i)
+                 data.frame(text=unlist(text[i]),
+                            user.name=unlist(user.name[i]),
+                            created_at=unlist(created_at[i]),
+                            user.created_at=unlist(user.created_at[i]),
+                            user.lang=unlist(user.lang[i])
+                            )))
+dfTweets2=do.call(rbind,
+                 lapply(1:length(text),
+                        function(i)
+                          data.frame(text=unlist(text[i]),
+                                     user.name=unlist(user.name[i]),
+                                     created_at=unlist(created_at[i]),
+                                     user.created_at=unlist(user.created_at[i]),
+                                     user.lang=unlist(user.lang[i])
+                          )))
+dfTweets3=dfTweets[]
+summary(dfTweets3)
+summary(dfTweets)
+tail(text)
+unlist(text[i])
+liste(plusieursListes)
+liste(liste)
+tail(unlist(text))
+dfTweets
+
+summary(dfTweets)
+dfTweets$user.created_at
+str(dfTweets)
+dfTweets$B
+class(user.name)
+user.name
 colonnesUtiles
 packages <- c("jsonlite", "dplyr", "purrr")
 purrr::walk(packages, library, character.only = TRUE, warn.conflicts = FALSE)
@@ -127,6 +168,7 @@ listColonnesUtiles=as.list(colonnesUtiles)
 listColonnesUtiles$possibly_sensitive
 unique(names(unlistedData[is.na(unlistedData)]))
 noms=unique(names(unlistedData))
+noms
 class(colonnesUtiles)
 noms
 summary(myJSON)
