@@ -1,33 +1,20 @@
 library(ggplot2)
-install.packages("httr")
-#install.packages("magrittr")
-library(magrittr)
-#install.packages("ggplot2")
 library(plyr)
 library(purrr)
-#install.packages("plyr")
-#install.packages("purrr")
-#install.packages("wordcloud")
-#install.packages("RColorBrewer")
-#install.packages("SnowballC")u
-#install.packages("wordcloud")
-#install.packages("jsonlite")
-#install.packages("stringr")
-#install.packages("dplyr")
-#install.packages("twitteR")
 library(twitteR)
 library(jsonlite)
-library(dplyr)
 library(stringr)
 library(tm)
+library("SnowballC")
+library("wordcloud")
+library("RColorBrewer")
+library(arabicStemR)
+library(quanteda)
 library(data.table)
 library(dplyr)
-library(stringi)
-#install.packages("XML")
-#install.packages("rlist")
 library(rlist)
-#install.packages("tm") 
-setwd("/home/amstelsus/Documents/Projet Twitter Isis/tweets_djihad/")
+source("arborescence.r")
+setwd(arborescence)
 getwd()
 list.dirs <- function(path=".", pattern=NULL, all.dirs=FALSE,
                       full.names=FALSE, ignore.case=FALSE) {
@@ -41,64 +28,27 @@ list.dirs <- function(path=".", pattern=NULL, all.dirs=FALSE,
   else
     return(basename(dirs))
 }
-dirs=list.dirs("/home/amstelsus/Documents/Projet Twitter Isis/tweets_djihad/")
+dirs=list.dirs(arborescence)
 length(dirs)
+
 for(i in 1:length(dirs))
 {
-directory=paste("/home/amstelsus/Documents/Projet Twitter Isis/tweets_djihad/",dirs[i],sep="")
-print(directory)
-temp <- list.files(directory,
-                   pattern="ID-centai-tablette-*", full.names=TRUE)
-if(i==1)
-{
-  myJSON <- lapply(temp, function(x) fromJSON(file=x))
+  directory=paste(arborescence,dirs[i],sep="")
+  print(directory)
+  temp <- list.files(directory,
+                     pattern="ID-centai-tablette-*", full.names=TRUE)
+  if(i==1)
+  {
+    myJSON <- lapply(temp, function(x) fromJSON(x))
+  }
+  else
+  {
+    myJSON=append(myJSON,lapply(temp, function(x) fromJSON(x)))
+  }
 }
-else
-{
-  myJSON=myJSON+lapply(temp, function(x) fromJSON(file=x))
-}
-}
-names
-essai$entities[[2]]
-head(myJSON)
-deuxiemeEssai=do.call(c, unlist(myJSON, recursive=FALSE))
-deuxiemeEssai$user.name
-essai$text
-myJSON[[1]]$in_reply_to_status_id_str
-library(dplyr)
-library(tidyr)
-myJSON[[1]]$user
-library(magrittr)
-df <- data.frame(a=colonnesUtiles, b=names(colonnesUtiles)) %>% mutate(key=cumsum(b=="experience.duration")) %>% 
-  split(.$key) %>% lapply(function(x) x %>% select(-key) %>% spread(b, a)) %>% 
-  do.call(rbind, .) %>% t %>% data.frame
-
-df$key <- rownames(df)
-unlistedData=unlist(sapply(myJSON,simplify = TRUE,USE.NAMES = TRUE, function(x) unlist(use.names = T,lapply(x, function(x) ifelse(is.null(x),NA,x)))))
-unlistedData=unlist(myJSON)
-
-lol=sapply(myJSON,simplify = TRUE,USE.NAMES = TRUE, function(x) x)
-lol[[1]]
-texte=myJSON[[1]]$text
-colonnesUtiles=unlistedData[names(unlistedData)==
-               c("text",
-                 "user.time_zone",
-                 "user.name",
-                 "possibly_sensitive",
-                 "user.location",
-                 "user.description",
-                 "user.created_at",
-                 "user.lang",
-                 "user.time_zone",
-                 "user.listed_count",
-                 "user.friends_count",
-                 "user.statuses_count",
-                 "user.followers_count")]
 user.name=lapply(myJSON,function(x) x$user$name)
 text=lapply(myJSON,function(x) x$text)
-possiblySensitive=lapply(myJSON,function(x) x$possibly_sensitive)
-user.time_zone=lapply(myJSON,function(x) x$user$time_zone)
-user.location=lapply(myJSON,function(x) x$user$location)
+created_at=lapply(myJSON,function(x) x$created_at)
 user.description=lapply(myJSON,function(x) x$user$description)
 user.created_at=lapply(myJSON,function(x) x$user$created_at)
 user.lang=lapply(myJSON,function(x) x$user$lang)
@@ -106,116 +56,202 @@ user.listed_count=lapply(myJSON,function(x) x$user$listed_count)
 user.friends_count=lapply(myJSON,function(x) x$user$friends_count)
 user.statuses_count=lapply(myJSON,function(x) x$user$statuses_count)
 user.followers_count=lapply(myJSON,function(x) x$user$followers_count)
-length(unlist(user.followers_count))
-
-dfTweets=do.call(rbind,
-        lapply(1:length(text),
-               function(i)
-                 data.frame(text=unlist(text[i]),
-                            user.name=unlist(user.name[i]),
-                            created_at=unlist(created_at[i]),
-                            user.created_at=unlist(user.created_at[i]),
-                            user.lang=unlist(user.lang[i])
-                            )))
-dfTweets2=do.call(rbind,
-                 lapply(1:length(text),
-                        function(i)
-                          data.frame(text=unlist(text[i]),
-                                     user.name=unlist(user.name[i]),
-                                     created_at=unlist(created_at[i]),
-                                     user.created_at=unlist(user.created_at[i]),
-                                     user.lang=unlist(user.lang[i])
-                          )))
-dfTweets3=dfTweets[]
-summary(dfTweets3)
-summary(dfTweets)
-tail(text)
-unlist(text[i])
-liste(plusieursListes)
-liste(liste)
-tail(unlist(text))
-dfTweets
-
-summary(dfTweets)
-dfTweets$user.created_at
-str(dfTweets)
-dfTweets$B
-class(user.name)
 user.name
-colonnesUtiles
-packages <- c("jsonlite", "dplyr", "purrr")
-purrr::walk(packages, library, character.only = TRUE, warn.conflicts = FALSE)
-class(data)
-data <- map_at(data, vars, unlist) %>% tibble::as_tibble(.)
-do.call(rbind, lapply(myJSON, function(x)as.data.frame(x)))
-names(myJSON[[1]])
-colonnesUtilesF=jsonlite::flatten(colonnesUtiles)
-lapply(myJSON,function(x)
-  {
-  dfessai=cbind(dfessai,x)
-  })
-install.packages("devtools")
-devtools::install_github("gluc/data.tree")
-dfessai
-essai$user
-library(gtools)
-install.packages("devtools")
-require(devtools)
-data.table::rbindlist(myJSON,fill=T)
-source_gist(4205477)
-do.call("smartbind",myJSON)
-listColonnesUtiles=as.list(colonnesUtiles)
-listColonnesUtiles$possibly_sensitive
-unique(names(unlistedData[is.na(unlistedData)]))
-noms=unique(names(unlistedData))
-noms
-class(colonnesUtiles)
-noms
-summary(myJSON)
-dfessai=as.data.frame(colonnesUtiles)
-head(dfessai)
-unique(names(myJSON))
-unique(names(unlistedData))
-columns=unique(names(unlistedData))
-essai
-columns
-place
-dfTweets=data.frame(unlistedData[names(unlistedData)=="text"],check.names = T)
-dfTweets=cbind(dfTweets,unlistedData,unlistedData[names(unlistedData)=="place.country"])
-names(dfTweets)
-tweets[,"user"]
-head(dfTweets)
-names(dfTweets)
-texts$text = gsub("[[:punct:]]", "", texts$text)
-texts$text = gsub("[[:digit:]]", "", texts$text)
-texts$text = gsub("http\\w+", "", texts$text)
-texts$text = gsub("[ \t]{2,}", "", texts$text)
-texts$text = gsub("^\\s+|\\s+$", "", texts$text)
-texts$text = gsub("\n", " ", texts$text)
-texts
+lang=lapply(myJSON,function(x) x$lang)
+lang
+length(unlist(user.followers_count))
+dfTweets=do.call(rbind,lapply(1:length(text),
+                              function(i)
+                                data_frame(text=unlist(text[i]),
+                                           user.name=unlist(user.name[i]),
+                                           created_at=unlist(created_at[i]),
+                                           user.created_at=unlist(user.created_at[i]),
+                                           user.lang=unlist(user.lang[i]),
+                                           lang=unlist(lang[i]),
+                                           user.friends_count=unlist(user.friends_count[i]),
+                                           user.statuses_count=unlist(user.statuses_count[i])
+                                )))
+dfTweets$lang
+dfTweets=dfTweets[!duplicated(dfTweets[,c('text')]),]
 dfTweets
-tweets$entities
-class(tweets)
-str(tweets$entities)
-hashtags
+dfTweets3$text= gsub("[[:punct:]]", "", dfTweets3$text)
+dfTweets3$text = gsub("[[:digit:]]", "", dfTweets3$text)
+dfTweets$text = gsub("http\\w+", " ", dfTweets$text)
+dfTweets$text = gsub("https\\w+", " ", dfTweets$text)
+dfTweets3$text = gsub("[ \t]{2,}", "", dfTweets3$text)
+dfTweets3$text = gsub("^\\s+|\\s+$", "", dfTweets3$text)
+dfTweets$text = gsub("\n", " ", dfTweets$text)
+dfTweets$text
+summary(dfTweets)
+library(tidytext)
+output<- 'word'
+input<- 'text'
+dfTweets
+help(unnest_tokens)
+tidy_tweets <- bind_rows(dfTweets[,dfTweets$lang="ar"]%>% 
+                           mutate(langue = "Julia"),
+                         tweets_dave %>% 
+                           mutate(person = "David")) %>%
+  mutate(timestamp = ymd_hms(timestamp))
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(readr)
+format.str <- "%a %b %d %H:%M:%S %z %Y"
+as.POSIXct(strptime(dfTweets[,"created_at"], format.str, tz = "GMT"), tz = "GMT")
+tweets <- bind_rows(dfTweets %>% mutate(timestamp=as.POSIXct(strptime(created_at, format.str, tz = "GMT"), tz = "GMT")))
+tweets$timestamp
+ggplot(tweets, aes(x = timestamp, fill = lang)) +
+  geom_histogram(position = "identity", bins = 20, show.legend = FALSE) +
+  facet_wrap(~lang, ncol = 1)
+arabicTweets=tweets[tweets$lang=="ar",]
+frenchTweets=tweets[tweets$lang=="fr",]
+englishTweets=tweets[tweets$lang=="en",]
+replace_reg <- "https://t.co/[A-Za-z\\d]+|http://[A-Za-z\\d]+|&amp;|&lt;|&gt;|RT|https"
+unnest_reg <- "([^ء-يA-Za-za_\\d#@']|'(?![ء-يA-Za-z_\\d#@]))"
+arabicStopWords=scan(file = 'arabicStopWords.txt',what = "character"())
+arabicStopWords
+library(stringr)
+library(dplyr)
+library(stringr)
+library(tidytext)
+# tidy_tweets <- tweets %>% 
+#   filter(!str_detect(text, "^RT")) %>%
+#   mutate(text = str_replace_all(text, replace_reg, "")) %>%
+#   unnest_tokens(word, text, token = "regex", pattern = unnest_reg) %>%
+#   filter(!word %in% ifelse(lang=="ar",arabicStopWords,ifelse(lang=="fr",stopwords("french"),stopwords("english"))),
+#          str_detect(word, "[a-zء-ي]"))
+tidy_arabicTweets <- arabicTweets %>% 
+  filter(!str_detect(text, "^RT")) %>%
+  mutate(text = str_replace_all(text, replace_reg, ""),linenumber = row_number()) %>%
+  unnest_tokens(word, text, token = "regex", pattern = unnest_reg) %>%
+  filter(!word %in% arabicStopWords,
+         str_detect(word, "[a-zء-ي]"))
+tidy_englishTweets <- englishTweets %>% 
+  filter(!str_detect(text, "^RT")) %>%
+  mutate(text = str_replace_all(text, replace_reg, "")) %>%
+  unnest_tokens(word, text, token = "regex", pattern = unnest_reg) %>%
+  filter(!word %in% stopwords("english"),
+         str_detect(word, "[a-zء-ي]"))
+tidy_frenchTweets <- frenchTweets %>% 
+  filter(!str_detect(text, "^RT")) %>%
+  mutate(text = str_replace_all(text, replace_reg, "")) %>%
+  unnest_tokens(word, text, token = "regex", pattern = unnest_reg) %>%
+  filter(!word %in% stopwords("french"),
+         str_detect(word, "[a-zء-ي]"))
+tidy_arabicTweets %>%
+  count(word) %>%
+  with(wordcloud(word, n, max.words=200, random.order=FALSE, rot.per=0.35, 
+                 colors=brewer.pal(8, "Dark2")))
+library(wordcloud)
+frequency <- tidy_arabicTweets %>% 
+  group_by(lang) %>% 
+  count(word, sort = TRUE) %>% 
+  left_join(tidy_arabicTweets%>% 
+              group_by(lang) %>% 
+              summarise(total = n())) %>%
+  mutate(freq = n/total)
+library(ggplot2)
+tidy_arabicTweets %>%
+  count(word, sort = TRUE) %>%
+  filter(n > 600) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip()
+library(tidyr)
+arabicSentiment <- tidy_arabicTweets %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(user.name, index = linenumber %/% 80, sentiment) %>%
+  spread(sentiment, n, fill = 0) %>%
+  mutate(sentiment = positive - negative)
+library(tidyr)
+library(xlsx)
+library(dplyr)
+library(stringr)
+arabic = read.csv(file="Arabic_Emoticon_Lexicon.txt",sep="\t",header=T)
+arabic[arabic$word=="الصحوات,"]
+dfTweets[grepl("هيت",dfTweets$text),]
+summary(arabic)
+colnames(arabic)[1]="word"
+arabic
+arabic$sentiment=ifelse(arabic$X.Sentiment.Score.<1,"negative","positif")
+nrcjoy <- arabic %>% 
+  filter(sentiment == "negative")
+tidy_arabicTweets %>%
+  inner_join(nrcjoy) %>%
+  count(word, sort = TRUE)
+plot(1:nrow(arabic),arabic$X.Sentiment.Score.,ylim=c(-5,5),xlim=c(0,600))
+arabic$X.Sentiment.Score.
+janeaustensentiment <- tidy_arabicTweets %>%
+  inner_join(arabic) %>%
+  count(lang, index = linenumber %/% 80, sentiment) %>%
+  spread(sentiment, n, fill = 0) %>%
+  mutate(sentiment = positive - negative)
+library(ggplot2)
+library(tidytext)
+essais <- tidy_arabicTweets %>%
+  inner_join(arabic) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  ungroup()
+essais
+essais %>%
+  group_by(sentiment) %>%
+  top_n(10) %>%
+  ungroup() %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n, fill = sentiment)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~sentiment, scales = "free_y") +
+  labs(y = "Contribution to sentiment",
+       x = NULL) +
+  coord_flip()
+docsFrench = tm::Corpus(tm::VectorSource(dfTweets$text[which(dfTweets$lang=='fr')]))
+docsEnglish = tm::Corpus(tm::VectorSource(dfTweets$text[which(dfTweets$lang=='en')]))
+docsArabic = tm::Corpus(tm::VectorSource(dfTweets$text[which(dfTweets$lang=='ar')]))
+arabicStopWords=tm_map(docsArabic,arabicStemR::removeStopWords)[[2]]$content
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+docsFrench <- tm_map(docsFrench, toSpace, "/")
+docsFrench <- tm_map(docsFrench, toSpace, "@")
+docsFrench <- tm_map(docsFrench, toSpace, "\\|")
+docsArabic <- tm_map(docsArabic, toSpace, "/")
+docsArabic <- tm_map(docsArabic, toSpace, "@")
+docsArabic <- tm_map(docsArabic, toSpace, "\\|")
+docsEnglish <- tm_map(docsEnglish, toSpace, "/")
+docsEnglish <- tm_map(docsEnglish, toSpace, "@")
+docsEnglish <- tm_map(docsEnglish, toSpace, "\\|")
+docsFrench <- tm_map(docsFrench, content_transformer(tolower))
+docsFrench <- tm_map(docsFrench, removeNumbers)
+docsFrench <- tm_map(docsFrench, removeWords, stopwords("french"))
+docsArabic <- tm_map(docsArabic, arabicStemR::removeNumbers)
+docsArabic <- tm_map(docsArabic, arabicStemR::removePunctuation)
+docsArabic <- tm_map(docsArabic,removeWords,arabicStopWords)
+docsEnglish <- tm_map(docsEnglish, content_transformer(tolower))
+docsEnglish <- tm_map(docsEnglish, removeNumbers)
+docsEnglish <- tm_map(docsEnglish, removeWords, stopwords("english"))
+
+inspect(docsEnglish)
+tdmFrench=TermDocumentMatrix(docsFrench)
+tdmArabic=TermDocumentMatrix(docsArabic)
+tdmEnglish=TermDocumentMatrix(docsEnglish)
+wordsListFrench <- data.frame(word = names(sort(rowSums(as.matrix(tdmFrench)),decreasing = T)),freq=sort(rowSums(as.matrix(tdmFrench)),decreasing = T))
+wordsListArabic <- data.frame(word = names(sort(rowSums(as.matrix(tdmArabic)),decreasing = T)),freq=sort(rowSums(as.matrix(tdmArabic)),decreasing = T))
+wordsListEnglish <- data.frame(word = names(sort(rowSums(as.matrix(tdmEnglish)),decreasing = T)),freq=sort(rowSums(as.matrix(tdmEnglish)),decreasing = T)).
+set.seed(1234)
+head(wordsListArabic,10)
+wordcloud(words = wordsListArabic$word, freq = wordsListArabic$freq, min.freq = 1,
+          max.words=200, random.order=FALSE, rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
+findFreqTerms(tdmArabic, lowfreq = 200)
+findAssocs(tdmArabic, terms = "", corlimit = 0.3)
+barplot(wordsListArabic[1:10,]$freq, las = 2, names.arg = wordsListArabic[1:10,]$word,
+        col ="lightblue", main ="Most frequent words",
+        ylab = "Word frequencies")
+head(wordsListEnglish,10)
+head(wordsListArabic,10)
+head(wordsListFrench)
+inspect(docsEnglish)
 hashtag.regex <- regex("(?<=^|\\s)#\\S+")
-hashtags <- str_extract_all(tweets$text, hashtag.regex)
-tweets_tags=cbind(texts$text,hashtags)
-tweets_tags
-summary(fusion)
-lapply(myJSON,function(x) x$user$name)
-length(lapply(myJSON,function(x) x$user$name))
-dfTweets=as.data.frame(lapply(myJSON,function(x) x$user$name))
-dfTweets
-dfTweets = as.data.frame(do.call(rbind,plyr::ldply(myJSON, function(x) x)))
-myJSON[[3]]$place
-dfEssai=as.data.frame()
-plyr::ldply(myJSON, x)
-install.packages("reshape2")
-library("reshape2")
-dcast(cbind(
-  coln = sequence(rapply(myJSON, length)), 
-  melt(myJSON)), L1 + L2 ~ coln, 
-  value.var = "value")
-tibTweets=tibble::tibble()
-tibTweets
+hashtags <- str_extract_all(dfTweets3$text, hashtag.regex)
+hashtags
