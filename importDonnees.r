@@ -121,6 +121,31 @@ library(tidytext)
 #   unnest_tokens(word, text, token = "regex", pattern = unnest_reg) %>%
 #   filter(!word %in% ifelse(lang=="ar",arabicStopWords,ifelse(lang=="fr",stopwords("french"),stopwords("english"))),
 #          str_detect(word, "[a-zء-ي]"))
+summary(dfTweets)
+nrow(arabicTweets)
+arabicTweets[16,1]
+arabicTweets[15,]$radical=0
+arabicTweets$timestamp
+nvArabicTweets=arabicTweets
+nrow(nvArabicTweets[nvArabicTweets$timestamp=="2015-11-13",])
+nvArabicTweets13=nvArabicTweets[nvArabicTweets$timestamp=="2015-11-13",]
+nvArabicTweets13[17,1]
+nvArabicTweets13[17,]$radical=1
+nvArabicTweets13$radical
+#17
+nvArabicTweets13$radical
+nvArabicTweets14=nvArabicTweets[nvArabicTweets$timestamp=="2015-11-14",]
+nvArabicTweets14[19,1]
+nvArabicTweets14[18,]$radical=1
+nvArabicTweets12=nvArabicTweets[nvArabicTweets$timestamp=="2015-11-12",]
+nvArabicTweets12[1,1]
+nvArabicTweets12[18,]$radical=1
+filter(arabicTweets, timestamp == "2015-11-13")
+nvArabicTweets[nvArabicTweets$timestamp=="2015-11-13","timestamp"]
+summary(nvArabicTweets)
+head(arabicTweets[,"radical"],13)
+class(arabicTweets$timestamp)
+summary(arabicTweets)
 tidy_arabicTweets <- arabicTweets %>% 
   filter(!str_detect(text, "^RT")) %>%
   mutate(text = str_replace_all(text, replace_reg, ""),linenumber = row_number()) %>%
@@ -143,6 +168,14 @@ tidy_arabicTweets %>%
   count(word) %>%
   with(wordcloud(word, n, max.words=200, random.order=FALSE, rot.per=0.35, 
                  colors=brewer.pal(8, "Dark2")))
+dfTweets %>%
+  filter(!str_detect(text, "^RT")) %>%
+  mutate(text = str_replace_all(text, replace_reg, "")) %>%
+  unnest_tokens(trigram, text, token = "ngrams", n = 2) %>%
+  separate(trigram, c("word1", "word2"), sep = " ") %>%
+  filter(!word1 %in% arabicStopWords,
+         !word2 %in% arabicStopWords) %>%
+  count(word1, word2, sort = TRUE)
 library(wordcloud)
 frequency <- tidy_arabicTweets %>% 
   group_by(lang) %>% 
@@ -171,14 +204,14 @@ library(xlsx)
 library(dplyr)
 library(stringr)
 arabic = read.csv(file="Arabic_Emoticon_Lexicon.txt",sep="\t",header=T)
-arabic[arabic$word=="الصحوات,"]
+arabic[arabic$word=="#دولة_الخلافة",]
 dfTweets[grepl("هيت",dfTweets$text),]
 summary(arabic)
 colnames(arabic)[1]="word"
 arabic
-arabic$sentiment=ifelse(arabic$X.Sentiment.Score.<1,"negative","positif")
+arabic$sentiment=ifelse(arabic$X.Sentiment.Score.<0,"negative","positif")
 nrcjoy <- arabic %>% 
-  filter(sentiment == "negative")
+  filter(sentiment == "positif")
 tidy_arabicTweets %>%
   inner_join(nrcjoy) %>%
   count(word, sort = TRUE)
