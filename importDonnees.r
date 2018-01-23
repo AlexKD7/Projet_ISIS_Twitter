@@ -1,3 +1,18 @@
+install.packages("ggplo2")
+install.packages("plyr")
+install.packages("purrr")
+install.packages("twitteR")
+install.packages("jsonlite")
+install.packages("stringr")
+install.packages("tm")
+install.packages("SnowballC")
+install.packages("wordcloud")
+install.packages("RColorBrewer")
+install.packages("arabicStemR")
+install.packages("quanteda")
+install.packages("data.table")
+install.packages("dplyr")
+install.packages("rlist")
 library(ggplot2)
 library(plyr)
 library(purrr)
@@ -14,6 +29,7 @@ library(data.table)
 library(dplyr)
 library(rlist)
 source("arborescence.r")
+arborescence="/Users/alexisung/Cours/BI A3/Projet de fin de parcours - Twitter/Projet Twitter ISIS/tweets_attentats/"
 setwd(arborescence)
 getwd()
 list.dirs <- function(path=".", pattern=NULL, all.dirs=FALSE,
@@ -47,6 +63,7 @@ for(i in 1:length(dirs))
   }
 }
 user.name=lapply(myJSON,function(x) x$user$name)
+user.name
 text=lapply(myJSON,function(x) x$text)
 created_at=lapply(myJSON,function(x) x$created_at)
 user.description=lapply(myJSON,function(x) x$user$description)
@@ -56,6 +73,7 @@ user.listed_count=lapply(myJSON,function(x) x$user$listed_count)
 user.friends_count=lapply(myJSON,function(x) x$user$friends_count)
 user.statuses_count=lapply(myJSON,function(x) x$user$statuses_count)
 user.followers_count=lapply(myJSON,function(x) x$user$followers_count)
+head(myJSON)
 user.name
 lang=lapply(myJSON,function(x) x$lang)
 lang
@@ -98,6 +116,7 @@ library(ggplot2)
 library(dplyr)
 library(readr)
 format.str <- "%a %b %d %H:%M:%S %z %Y"
+Sys.setlocale("LC_TIME","en_US.UTF-8")
 as.POSIXct(strptime(dfTweets[,"created_at"], format.str, tz = "GMT"), tz = "GMT")
 tweets <- bind_rows(dfTweets %>% mutate(timestamp=as.POSIXct(strptime(created_at, format.str, tz = "GMT"), tz = "GMT")))
 tweets$timestamp
@@ -106,6 +125,19 @@ ggplot(tweets, aes(x = timestamp, fill = lang)) +
   facet_wrap(~lang, ncol = 1)
 arabicTweets=tweets[tweets$lang=="ar",]
 frenchTweets=tweets[tweets$lang=="fr",]
+frenchTweets$timestamp=as.Date(frenchTweets$timestamp)
+frenchTweets13=frenchTweets[frenchTweets$timestamp=="2015-11-13",]
+frenchTweets13[,"radical"]=NA
+frenchTweets13$radical
+nrow(frenchTweets13)
+frenchTweets13[8,1]
+frenchTweets13[8,]$radical=1
+frenchTweets14=frenchTweets[frenchTweets$timestamp=="2015-11-14",]
+frenchTweets14[,"radical"]=NA 
+nrow(frenchTweets14)
+frenchTweets14[90,1]
+frenchTweets14[89,]$radical=-1
+
 englishTweets=tweets[tweets$lang=="en",]
 replace_reg <- "https://t.co/[A-Za-z\\d]+|http://[A-Za-z\\d]+|&amp;|&lt;|&gt;|RT|https"
 unnest_reg <- "([^ء-يA-Za-za_\\d#@']|'(?![ء-يA-Za-z_\\d#@]))"
