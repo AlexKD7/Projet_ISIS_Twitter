@@ -132,12 +132,21 @@ frenchTweets13$radical
 nrow(frenchTweets13)
 frenchTweets13[8,1]
 frenchTweets13[8,]$radical=1
+write.table(frenchTweets13, "/Users/alexisung/Desktop/Data/frenchTweets13.txt", sep="\t")
 frenchTweets14=frenchTweets[frenchTweets$timestamp=="2015-11-14",]
 frenchTweets14[,"radical"]=NA 
 nrow(frenchTweets14)
-frenchTweets14[90,1]
-frenchTweets14[89,]$radical=-1
-
+frenchTweets14[200,1]
+frenchTweets14[200,]$radical=-1
+frenchTweets14$radical
+write.table(frenchTweets14, "/Users/alexisung/Desktop/Data/frenchTweets14.txt", sep="\t")
+frenchTweets15=frenchTweets[frenchTweets$timestamp=="2015-11-15",]
+frenchTweets15[,"radical"]=NA 
+nrow(frenchTweets15)
+frenchTweets15[200,1]
+frenchTweets15[200,]$radical=0
+frenchTweets15$radical
+write.table(frenchTweets15, "/Users/alexisung/Desktop/Data/frenchTweets15.txt", sep="\t")
 englishTweets=tweets[tweets$lang=="en",]
 replace_reg <- "https://t.co/[A-Za-z\\d]+|http://[A-Za-z\\d]+|&amp;|&lt;|&gt;|RT|https"
 unnest_reg <- "([^ء-يA-Za-za_\\d#@']|'(?![ء-يA-Za-z_\\d#@]))"
